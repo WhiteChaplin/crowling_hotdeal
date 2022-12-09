@@ -1,0 +1,203 @@
+{%load humanize%}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <title>세상 모든 핫딜 - 세모핫</title>
+    <style>
+        tr, td {
+          border-bottom: 1px solid #a39d9d;
+        }
+        p>a.login-form{
+            text-align: center;
+            text-decoration: none; /* 링크의 밑줄 제거 */
+            color: inherit; /* 링크의 색상 제거 */
+          }
+      </style>
+</head>
+<body>
+    <p style="text-align: center; vertical-align:middle">
+        <a class = login-form href="http://127.0.0.1:8000/"><i class="bi bi-basket" style="font-size: 80px;"></i></a>
+    </p>
+
+        <form action="http://127.0.0.1:8000/hotdeal/view/" method="GET">
+            <div class="setting">
+                <div class="row" style = "margin:0 auto">
+                    <div class="col">
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-outline-secondary" id = "reset" onclick=click_reset>검색 내용 초기화</button>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <input type="text" name="search-keyword" class="form-control" placeholder="검색 내용 입력"
+                            aria-label="First name" id="keyword">
+                    </div>
+                    <div class="col">
+                        <select class="form-select" name="sort-category" aria-label="Default select example" id = "category">
+                            <option selected>카테고리 선택(설정안함)</option>
+                            <option value="1">IT</option>
+                            <option value="2">상품권</option>
+                            <option value="3">가전/가구</option>
+                            <option value="4">생활/식품</option>
+                            <option value="5">의류/잡화/서적</option>
+                            <option value="6">기타</option>
+                            <option value="7">화장품</option>
+                        </select>
+                    </div>
+                    <div class="col md-4">
+                        <select class="form-select" name="sort-select" aria-label="Default select example" id = "sort">
+                            <option selected>정렬 기준(설정안함)</option>
+                            <option value="1">날짜 오름차순</option>
+                            <option value="2">날짜 내림차순</option>
+                            <option value="3">가격 오름차순</option>
+                            <option value="4">가격 내림차순</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">이동하기</button>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="row">
+            </div>
+        </form>
+
+
+
+
+
+    <div class="article_box" style="margin-left: 20px; margin-right:20px">
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                  {% for deal in deals %}
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            {% if deal.image == "/themes/quasarzone/images/common/no_images.jpg" %}
+                              <a href="{{ deal.link }}"><img src="{% static 'js/images/noimage.jpg' %}" style="border: 3px solid gold; width: 269px; height: 200px; display: block; margin: auto;"></a>
+                            {% else %}
+                              <a href="{{ deal.link }}"><img src="{{ deal.image }}" style="border: 3px solid gold; width: 269px; height: 200px; display: block; margin: auto;"></a>
+                            {% endif %}
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                  <p>
+                                  [&nbsp {{ deal.category }} &nbsp]
+                                  </p>
+                                  <p>
+                                    <hr>
+                                    <h5 class="fw-bolder">{{ deal.title }}</h5>
+                                    <hr>
+                                  </p>
+                                  <p id = price>
+                                    {{ deal.price|intcomma }}원
+                                  </p>
+                                  <p>
+                                    {{ deal.upload_date }}
+                                  </p>
+                                  </div>
+                                </div>
+                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center" style>
+                                  <a class="btn btn-outline-dark mt-auto" style="background-color: gold;" href="{{ deal.link }}">구매하러 가기</a>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 섹션 구문 끝 -->
+      <!-- 페이징 처리 구문 시작 -->
+      <ul class="pagination justify-content-center">
+        {% if deals.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ deals.previous_page_number }}&search-keyword={{setting.0}}&sort-category={{setting.1}}&sort-select={{setting.2}}">이전</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+        </li>
+        {% endif %}
+        {% for page_number in deals.paginator.page_range %}
+          {% if page_number >= deals.number|add:-5 and page_number <= deals.number|add:5 %}
+            {% if page_number == deals.number %}
+              <li class="page-item active" aria-current="page">
+                  <a class="page-link" href="?page={{ page_number }}&search-keyword={{setting.0}}&sort-category={{setting.1}}&sort-select={{setting.2}}">{{ page_number }}</a>
+              </li>
+            {% else %}
+              <li class="page-item">
+                  <a class="page-link" href="?page={{ page_number }}&search-keyword={{setting.0}}&sort-category={{setting.1}}&sort-select={{setting.2}}">{{ page_number }}</a>
+              </li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        {% if deals.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ deals.next_page_number }}&search-keyword={{setting.0}}&sort-category={{setting.1}}&sort-select={{setting.2}}">다음</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+        {% endif %}
+    </ul>
+      <!-- 페이징 처리 구문 끝 -->
+</body>
+<script>
+    var category_select = document.getElementById("category")
+    var sort_select = document.getElementById("sort")
+    var keyword_select = document.getElementById("keyword")
+    //console.log({{setting.1|safe}})
+    keyword_select.value = "{{setting.0|safe}}"
+    //console.log("{{setting.1|safe}}")
+    //console.log("{{setting.2|safe}}")
+    //console.log("{{deals.1}}")
+    for(let i =0; i<category_select.options.length; i++){
+        if(category_select.options[i].value == "{{setting.1|safe}}" ){
+            category_select.options[i].selected = true;
+        }
+    }
+    for(let i =0; i<sort_select.options.length; i++){
+        if(sort_select.options[i].value == "{{setting.2|safe}}" ){
+            sort_select.options[i].selected = true;
+        }
+    }
+    
+
+    {% for deal in deals %}
+        if ("{{deal.site}}" == "ppomppu"){
+            var price = document.querySelectorAll("p#price")[{{forloop.counter0}}]
+            price.innerHTML="X"
+        }
+    {%endfor%}
+
+    window.onload = function () {
+        var el = document.getElementById("reset");
+        el.onclick = click_reset;
+    }
+
+    function click_reset(){
+        category_select[0].selected = true;
+        sort_select[0].selected = true;
+        keyword_select.value = "";
+    }
+
+    //var price = document.querySelectorAll("td#price")[0].innerHTML
+    //console.log(price)
+    //for(let index of price){
+      //  console.log(index.innerHTML)
+    //}
+</script>
+</html>
