@@ -43,7 +43,7 @@ up_cnt_limit = 0
 def run():
     for key,value in url_dict.items():
         if key == "ppoumpu":
-            for index in range(1,4):
+            for index in range(1,5):
                 print("time wake")
                 url = value+"&page="+str(index)
                 print(url)
@@ -57,7 +57,7 @@ def run():
                 for item in items:
                     
                     #DB 테이블에 3일치만 유지
-                    row, _ = Deal.objects.filter(upload_date__lte=datetime.now() - timedelta(days=during_date)).delete()
+                    # row, _ = Deal.objects.filter(upload_date__lte=datetime.now() - timedelta(days=during_date)).delete()
                     # row, _ = Deal.objects.filter(upload_date__lte=datetime.now() - timedelta(minutes=during_date)).delete()
                     # print(row)
                     try:
@@ -71,6 +71,7 @@ def run():
 
                         replay_count = item.select("td span.list_comment2 span")[0].text.strip()
 
+                        up_count = 0
                         up_count = item.select("td.eng.list_vspace")[2].text.strip()
 
                         up_count = up_count.split("-")[0]
@@ -103,13 +104,12 @@ def run():
                         #     if
                         # print(title[:money_slice+1])
                         if up_count >=up_cnt_limit:
-
-                                if(Deal.objects.filter(title__iexact=link).count()==0):
-                                    print(title)
-                                    Deal(image = img_url, title = title, link = link, upload_date = date_time,category = category, price = 0,site="ppomppu").save()
-                                    caht_id = secret.chat_id #발급받은 채팅방 id
-                                    message = f"{title}--{link}" #크롤링해서 가져온 제목과 링크를 message로 지정
-                                    tlgm_bot.sendMessage(caht_id, message)
+                            if(Deal.objects.filter(title__iexact=title).count()==0):
+                                print(title)
+                                Deal(image = img_url, title = title, link = link, upload_date = date_time,category = category, price = 0,site="ppomppu").save()
+                                caht_id = secret.chat_id #발급받은 채팅방 id
+                                message = f"{title}--{link}" #크롤링해서 가져온 제목과 링크를 message로 지정
+                                tlgm_bot.sendMessage(caht_id, message)
                             
                     #공백. 값이 없는 것 처리. 값이 없으면 패스한다.
                     except Exception as e:

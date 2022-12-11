@@ -21,8 +21,9 @@ category_dict = {
 def epem_crowling(input_url):
     base_url = "https://www.fmkorea.com/"
     # url = 'https://www.fmkorea.com/index.php?mid=hotdeal&sort_index=pop&order_type=desc'
-    for index in range(1,4):
+    for index in range(1,5):
         url = input_url+"&page="+str(index)
+        print(url)
         time.sleep(1)
         res = requests.get(url)
         print(f"epem: {res}")
@@ -33,7 +34,7 @@ def epem_crowling(input_url):
         #일단 중간에 삭제된 url이 있으면 hotdeal_var8Y가 되어버림. 없는 값 처리 해야함
         for item in items:
             #DB 테이블에 3일치만 유지
-            row, _ = Deal.objects.filter(upload_date__lte=datetime.now() - timedelta(days=during_date)).delete()
+            # row, _ = Deal.objects.filter(upload_date__lte=datetime.now() - timedelta(days=during_date)).delete()
             try:
                 if item.select("a.hotdeal_var8") != []:
                     img = ""
@@ -98,7 +99,7 @@ def epem_crowling(input_url):
                     # print(date_time)
                     
                     if up_count >=0:
-                        if(Deal.objects.filter(title__iexact=link).count()==0):
+                        if(Deal.objects.filter(title__iexact=title).count()==0):
                             Deal(image = img, title = title, link = link, upload_date = date_time,category = category, price = price_raw, site = "epem_korea").save()
             
             except Exception as e: # 비어있으면 그냥 지나가라

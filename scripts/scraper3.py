@@ -41,11 +41,11 @@ category_dict = {
 }
 
 def quasarzone_crowling(url):
-    for i in range(1, 4):
+    for i in range(1, 5):
         time.sleep(0.31)
         url = "https://quasarzone.com/bbs/qb_saleinfo?page="
         url = url + str(i)
-        
+        print(url)
         res = Request(url, headers={'User-Agent': 'Mozilla/5.0'}) # request를 날려서 받은 값을 res라는 변수에 저장
         res = urlopen(res)
 
@@ -54,7 +54,7 @@ def quasarzone_crowling(url):
         items = soup.select("div.market-type-list > table > tbody > tr")
 
         #DB 테이블에 3일치만 유지한다 => 3일 전 데이터는 delete 시킨다
-        row, _ = Deal.objects.filter(upload_date__lte=datetime.now() - timedelta(hours=during_date)).delete()
+        # row, _ = Deal.objects.filter(upload_date__lte=datetime.now() - timedelta(hours=during_date)).delete()
 
         for item in items:
             try:
@@ -101,8 +101,8 @@ def quasarzone_crowling(url):
                 upload_date = soup_2.select("div.common-view-wrap > div.common-view-area > dl > dt > div.util-area > p.right > span.date")[0].text.strip()
                 date_time = datetime(year = int(upload_date[:4]), month=int(upload_date[5:7]), day=int(upload_date[8:10]), hour=int(upload_date[11:13]), minute=int(upload_date[14:16]))
 
-                print(upload_date)
-                db_link_cnt = Deal.objects.filter(title__iexact=link).count()
+                
+                db_link_cnt = Deal.objects.filter(title__iexact=title).count()
 
                 if db_link_cnt==0:
                     # chat_id = secret.chat_id
@@ -110,6 +110,7 @@ def quasarzone_crowling(url):
                     # tlgm_bot.sendMessage(chat_id, message)
                 #     # 스크래핑 결과를 DB의 Deal 테이블에 저장
                     # print(type(img_url), type(category), type(title), type(price), type(link), type(reply_count), type(up_count), type(upload_date))
+                    print(upload_date)
                     Deal(image=img_url, category=category, title=title, price=price, link=link, upload_date=date_time,site="quasarzone").save()
                 
             except Exception as e: # 비어있으면 그냥 지나가라
