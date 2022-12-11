@@ -28,6 +28,18 @@ for opt in usd.find_all('option'):
 us = currency['USD']
 jp = currency['JPY']
 
+category_dict = {
+    "IT" : ["PC/하드웨어", "노트북/모바일", "게임/SW", "컴퓨터", "디지털", "SW/게임", "PC제품"],
+    "상품권" : ["상품권/쿠폰", "상품권", "모바일/상품권"],
+    "가전/가구" : ["가전/TV", "가전/가구", "가전제품"],
+    "생활/식품" : ["생활/식품", "디지털", "식품/건강", "먹거리", "생활용품"],
+    "의류/잡화/서적" : ["패션/의류", "서적", "의류/잡화",  "의류" ],
+    "기타" : ["기타"],
+    "화장품" : ["화장품"],
+    "패키지/이용권" : ["패키지/이용권"],
+    "해외핫딜" : ["해외핫딜"]
+}
+
 def quasarzone_crowling(url):
     for i in range(1, 3):
         time.sleep(0.31)
@@ -63,6 +75,10 @@ def quasarzone_crowling(url):
                 category = item.select("td")[1]
                 category = category.select("div.market-info-list > div.market-info-list-cont > div.market-info-sub > p > span.category")[0].text.strip()
 
+                category = [key for key,value in category_dict.items() if category in value]
+                if category != []:
+                    category = category[0]
+                    
                 price = item.select("div.market-info-list > div.market-info-list-cont > div.market-info-sub > p > span > span.text-orange")[0].text.strip()
                 price = price.replace(",", "")
                 

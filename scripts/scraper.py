@@ -57,7 +57,7 @@ def run():
                 for item in items:
                     
                     #DB 테이블에 3일치만 유지
-                    # row, _ = Deal.objects.filter(cdate__lte=datetime.now() - timedelta(days=during_date)).delete()
+                    row, _ = Deal.objects.filter(upload_date__lte=datetime.now() - timedelta(days=during_date)).delete()
                     # row, _ = Deal.objects.filter(upload_date__lte=datetime.now() - timedelta(minutes=during_date)).delete()
                     # print(row)
                     try:

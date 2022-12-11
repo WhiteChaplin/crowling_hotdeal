@@ -19,7 +19,7 @@ from hotdeal.views import index
 from hotdeal.views import test
 
 
-
-# urlpatterns = [
-#     path("hotdeal/view/",test)
-# ]
+app_name = "hotdeal"
+urlpatterns = [
+    path("view/",test,name="view"),
+]

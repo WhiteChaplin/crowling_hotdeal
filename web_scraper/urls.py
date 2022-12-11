@@ -21,11 +21,13 @@ from hotdeal import views
 from hotdeal.views import test
 
 
+app_name = "main"
 router = routers.DefaultRouter()
 router.register("deals",views.DealViewSet) #viewset에 설정한 deals 데이터들을 보여준다.
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',index,name = "index"),
-    path('hotdeal/view/',test),
+    path('/hotdeal/',include("hotdeal.urls")),
+    #path('hotdeal/view/',test),
     path('api/',include(router.urls))
 ]

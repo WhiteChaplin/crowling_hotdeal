@@ -22,10 +22,10 @@
 </head>
 <body>
     <p style="text-align: center; vertical-align:middle">
-        <a class = login-form href="http://127.0.0.1:8000/"><i class="bi bi-basket" style="font-size: 80px;"></i></a>
+        <a class = login-form href="/"><i class="bi bi-basket" style="font-size: 80px;"></i></a>
     </p>
 
-        <form action="http://127.0.0.1:8000/hotdeal/view/" method="GET">
+        <form action="{%url 'hotdeal:view'%}" method="GET">
             <div class="setting">
                 <div class="row" style = "margin:0 auto">
                     <div class="col">
@@ -179,7 +179,7 @@
     {% for deal in deals %}
         if ("{{deal.site}}" == "ppomppu"){
             var price = document.querySelectorAll("p#price")[{{forloop.counter0}}]
-            price.innerHTML="X"
+            price.innerHTML="가격정보 없음"
         }
     {%endfor%}
 
