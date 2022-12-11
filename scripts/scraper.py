@@ -38,12 +38,12 @@ category_dict = {
 during_date = 3
 
 #DB 테이블 지정을 위한 추천 갯수 지정
-up_cnt_limit = 1
+up_cnt_limit = 0
 
 def run():
     for key,value in url_dict.items():
         if key == "ppoumpu":
-            for index in range(1,3):
+            for index in range(1,4):
                 print("time wake")
                 url = value+"&page="+str(index)
                 print(url)
@@ -104,7 +104,7 @@ def run():
                         # print(title[:money_slice+1])
                         if up_count >=up_cnt_limit:
 
-                                if(Deal.objects.filter(link__iexact=link).count()==0):
+                                if(Deal.objects.filter(title__iexact=link).count()==0):
                                     print(title)
                                     Deal(image = img_url, title = title, link = link, upload_date = date_time,category = category, price = 0,site="ppomppu").save()
                                     caht_id = secret.chat_id #발급받은 채팅방 id

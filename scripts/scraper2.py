@@ -97,8 +97,8 @@ def epem_crowling(input_url):
                     # print(price_raw)
                     # print(date_time)
                     
-                    if up_count >=2:
-                        if(Deal.objects.filter(link__iexact=link).count()==0):
+                    if up_count >=0:
+                        if(Deal.objects.filter(title__iexact=link).count()==0):
                             Deal(image = img, title = title, link = link, upload_date = date_time,category = category, price = price_raw, site = "epem_korea").save()
             
             except Exception as e: # 비어있으면 그냥 지나가라

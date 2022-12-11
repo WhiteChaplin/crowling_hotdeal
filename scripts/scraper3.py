@@ -41,7 +41,7 @@ category_dict = {
 }
 
 def quasarzone_crowling(url):
-    for i in range(1, 3):
+    for i in range(1, 4):
         time.sleep(0.31)
         url = "https://quasarzone.com/bbs/qb_saleinfo?page="
         url = url + str(i)
@@ -53,8 +53,8 @@ def quasarzone_crowling(url):
 
         items = soup.select("div.market-type-list > table > tbody > tr")
 
-        # DB 테이블에 3일치만 유지한다 => 3일 전 데이터는 delete 시킨다
-        # row, _ = Deal.objects.filter(upload_date__lte=datetime.now() - timedelta(hours=during_date)).delete()
+        #DB 테이블에 3일치만 유지한다 => 3일 전 데이터는 delete 시킨다
+        row, _ = Deal.objects.filter(upload_date__lte=datetime.now() - timedelta(hours=during_date)).delete()
 
         for item in items:
             try:
@@ -102,7 +102,7 @@ def quasarzone_crowling(url):
                 date_time = datetime(year = int(upload_date[:4]), month=int(upload_date[5:7]), day=int(upload_date[8:10]), hour=int(upload_date[11:13]), minute=int(upload_date[14:16]))
 
                 print(upload_date)
-                db_link_cnt = Deal.objects.filter(link__iexact=link).count()
+                db_link_cnt = Deal.objects.filter(title__iexact=link).count()
 
                 if db_link_cnt==0:
                     # chat_id = secret.chat_id
